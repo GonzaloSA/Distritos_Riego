@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/Control.OSMGeocoder.css">
+        <link rel="stylesheet" href="css/leaflet-measure.css">
+        <link rel="stylesheet" href="css/cone.css">
+        <link rel="stylesheet" href="css/leaflet-panel-layers.css">
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+        <link rel="stylesheet" href="css/leaflet-search.css">
+        <link rel="icon" type="image/png" href="/images/icono_2.png" />
+        <title>Distritos de Riego</title>
+        <style type="text/css">
+            #miimagen{ position:absolute; z-index:1; } 
+            </style>
+    </head>
+    <body>
+        
+        <div id="map"></div>
+		<div id="miimagen"><a  href="http://constarkingenieria.com//" style='display:scroll;position:fixed;bottom:0px;left:0px;'><img src="images/logo 94x260.png" alt="Lights" class="w3-image" width="260" height="94"></a></div>
+        
+        <script src="js/leaflet.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/Control.OSMGeocoder.js"></script>
+        <script src="js/leaflet-measure.js"></script>
+        <script src="js/estilos.js"></script>
+        <script src="js/pop.js"></script>
+        <script src="js/leaflet-bing-layer.js"></script>
+        <script src="js/leaflet-panel-layers.js"></script>
+        <script src="js/leaflet-search.js"></script>
+        <script src="data/Rios_0.js"></script>
+        <script src="data/Distritos_1.js"></script>
+        <script src="data/Presas_2017_2.js"></script>
+        
+        <script>
+        var map = L.map('map', {
+            attributionControl: false,
+            zoomControl:true, maxZoom:28, minZoom:1
+        }).fitBounds([[20.4297696979,-105.273407402],[25.5763456049,-95.3136092106]]);
+        var hash = new L.Hash(map);
+        var measureControl = new L.Control.Measure({
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers',
+            primaryAreaUnit: 'sqmeters',
+            secondaryAreaUnit: 'hectares'
+        });
+        measureControl.addTo(map);
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        
+        map.createPane('pane_Rios_0');
+        map.getPane('pane_Rios_0').style.zIndex = 400;
+        map.getPane('pane_Rios_0').style['mix-blend-mode'] = 'normal';
+        var layer_Rios_0 = new L.geoJson(json_Rios_0, {
+            attribution: '<a href=""></a>',
+            pane: 'pane_Rios_0',
+            onEachFeature: pop_Rios_0,
+            style: style_Rios_0_0,
+        });
+        bounds_group.addLayer(layer_Rios_0);
+        //addLayer(layer_Rios_0);
+        
+        map.createPane('pane_Distritos_1');
+        map.getPane('pane_Distritos_1').style.zIndex = 401;
+        map.getPane('pane_Distritos_1').style['mix-blend-mode'] = 'normal';
+        var layer_Distritos_1 = new L.geoJson(json_Distritos_1, {
+            attribution: '<a href=""></a>',
+            pane: 'pane_Distritos_1',
+            onEachFeature: pop_Distritos_1,
+            style: style_Distritos_1_0,
+        });
+        bounds_group.addLayer(layer_Distritos_1);
+        //map.addLayer(layer_Distritos_1);
+        
+        map.createPane('pane_Presas_2017_2');
+        map.getPane('pane_Presas_2017_2').style.zIndex = 402;
+        map.getPane('pane_Presas_2017_2').style['mix-blend-mode'] = 'normal';
+        var layer_Presas_2017_2 = new L.geoJson(json_Presas_2017_2, {
+            attribution: '<a href=""></a>',
+            pane: 'pane_Presas_2017_2',
+            onEachFeature: pop_Presas_2017_2,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_Presas_2017_2_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_Presas_2017_2);
+        //map.addLayer(layer_Presas_2017_2);
+        map.addControl(new L.Control.Search({
+            layer: layer_Distritos_1,
+            position: 'topright',
+            initial: false,
+            hideMarkerOnCollapse: true,
+            propertyName: 'nom_dr'}));
+        		//-----------Agregando capas base-----------
+		var BING_KEY = 'AmhBLM8UCoYW1w5ysP93MDyFFjhQ_XL0xcMqqEHy4jeYw-ZMHtmYCfj_lYV0dmwP';
+		var bingLayer = L.tileLayer.bing(BING_KEY).addTo(map);
+        
+
+        var openstreetMap = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+			attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>',
+			maxZoom: 18
+		});//.addTo(map);
+        		//-----------Agregando capas base a panel-----------
+		var baseLayers = [
+			{
+				active: false,
+				name: '<b font: 120% "Helvetica Neue";>OpenStreetMap</b>',
+				layer: openstreetMap
+			},
+			{
+				active: true,
+				name: "<b>Bing</b>",
+				layer: bingLayer
+			}
+        ];
+        var presas = 'Volumen Almacenado<br /><table><tr><td style="text-align: center;"><img src="legend/Presas_2017_2_000002000.png" /></td><td> Menor a 200  hm<sup>3</sup></td></tr><tr><td style="text-align: center;"><img src="legend/Presas_2017_2_2005001.png" /></td><td>200 - 500  hm<sup>3</sup></td></tr><tr><td style="text-align: center;"><img src="legend/Presas_2017_2_53734800806022002.png" /></td><td> 500 - 1000  hm<sup>3</sup></td></tr><tr><td style="text-align: center;"><img src="legend/Presas_2017_2_806022001074696003.png" /></td><td> 1000 - 4000  hm<sup>3</sup></td></tr><tr><td style="text-align: center;"><img src="legend/Presas_2017_2_1074696001343370004.png" /></td><td> Mayor a 4000  hm<sup>3</sup></td></tr></table>';
+        var distrit = 'Distritos<br /><table><tr><td style="text-align: center;"><img src="legend/Distritos_1_AcuaFalcn0.png" /></td><td>Acuña Falcón</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_Ajacuba1.png" /></td><td>Ajacuba</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_Alfajayucan2.png" /></td><td>Alfajayucan</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_AltarPitiquito3.png" /></td><td>Altar Pitiquito</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_AltoRoConchos4.png" /></td><td>Alto Río Conchos</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_AltoRoLerma5.png" /></td><td>Alto Río Lerma</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_AmucoCutzamala6.png" /></td><td>Amuco-Cutzamala</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_Arroyozarco7.png" /></td><td>Arroyozarco</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_Atoyac8.png" /></td><td>Atoyac</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_AtoyacZahuapan9.png" /></td><td>Atoyac-Zahuapan</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_BajoRoBravo10.png" /></td><td>Bajo Río Bravo</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_BajoRoConchos11.png" /></td><td>Bajo Río Conchos</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_BajoRoSanJuan12.png" /></td><td>Bajo Río San Juan</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_BaluartePresidio13.png" /></td><td>Baluarte-Presidio</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_Buenaventura14.png" /></td><td>Buenaventura</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_Cacahoatan15.png" /></td><td>Cacahoatan</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_Chiconautla16.png" /></td><td>Chiconautla</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_CienegadeChapala17.png" /></td><td>Cienega de Chapala</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_ColoniasYaquis18.png" /></td><td>Colonias Yaquis</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_CostadeHermosillo19.png" /></td><td>Costa de Hermosillo</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_Cuajinicuilapa20.png" /></td><td>Cuajinicuilapa</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_CuliacnHumaya21.png" /></td><td>Culiacán-Humaya</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_Cuxtepeques22.png" /></td><td>Cuxtepeques</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_Delicias23.png" /></td><td>Delicias</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_DonMartin24.png" /></td><td>Don Martin</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_ElCarmen25.png" /></td><td>El Carmen</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_ElHigo26.png" /></td><td>El Higo</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_ElotaPiaxtla27.png" /></td><td>Elota-Piaxtla</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_EstadodeColima28.png" /></td><td>Estado de Colima</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_EstadodeDurango29.png" /></td><td>Estado de Durango</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_EstadodeJalisco30.png" /></td><td>Estado de Jalisco</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_EstadodeMxico31.png" /></td><td>Estado de México</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_EstadodeMorelos32.png" /></td><td>Estado de Morelos</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_EstadodeNayarit33.png" /></td><td>Estado de Nayarit</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_EstadodeZacatecas34.png" /></td><td>Estado de Zacatecas</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_Guasave35.png" /></td><td>Guasave</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_Guaymas36.png" /></td><td>Guaymas</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_JaliscoSur37.png" /></td><td>Jalisco Sur</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_Jilotepec38.png" /></td><td>Jilotepec</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_JosMaraMorelos39.png" /></td><td>José María Morelos</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_LaAntigua40.png" /></td><td>La Antigua</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_LaBegoa41.png" /></td><td>La Begoña</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_LaConcepcin42.png" /></td><td>La Concepción</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_LasLajas43.png" /></td><td>Las Lajas</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_LzaroCrdenas44.png" /></td><td>Lázaro Cárdenas</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_Mante45.png" /></td><td>Mante</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_Meztitlan46.png" /></td><td>Meztitlan</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_Mocorito47.png" /></td><td>Mocorito</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_Morelia48.png" /></td><td>Morelia</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_Nexpa49.png" /></td><td>Nexpa</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_Pabelln50.png" /></td><td>Pabellón</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_Palestina51.png" /></td><td>Palestina</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_Papigochic52.png" /></td><td>Papigochic</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_QuitupanLaMagdalena53.png" /></td><td>Quitupan-La Magdalena</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_ReginLagunera54.png" /></td><td>Región Lagunera</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_RoBlanco55.png" /></td><td>Río Blanco</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_RoColorado56.png" /></td><td>Río Colorado</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_RoFlorido57.png" /></td><td>Río Florido</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_RoFuerte58.png" /></td><td>Río Fuerte</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_RoHondo59.png" /></td><td>Río Hondo</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_RoMayo60.png" /></td><td>Río Mayo</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_RoPnucoUnidadAnimas61.png" /></td><td>Río Pánuco, Unidad Animas</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_RoPnucoUnidadChicayan62.png" /></td><td>Río Pánuco, Unidad Chicayan</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_RoPnucoUnidadPujalCoy63.png" /></td><td>Río Pánuco, Unidad Pujal Coy</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_RoSanLorenzo64.png" /></td><td>Río San Lorenzo</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_RoVerde65.png" /></td><td>Río Verde</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_RoVerdeProgreso66.png" /></td><td>Río Verde-Progreso</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_RoYaqui67.png" /></td><td>Río Yaqui</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_RosarioMezquite68.png" /></td><td>Rosario-Mezquite</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_SanGregorio69.png" /></td><td>San Gregorio</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_SanJuandelRo70.png" /></td><td>San Juan del Río</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_SantoDomingo71.png" /></td><td>Santo Domingo</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_SotoLaMarina72.png" /></td><td>Soto La Marina</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_Tehuantepec73.png" /></td><td>Tehuantepec</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_TepecoacuilcoQuechultenango74.png" /></td><td>Tepecoacuilco-Quechultenango</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_Ticul75.png" /></td><td>Ticul</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_Tomatln76.png" /></td><td>Tomatlán</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_Tula77.png" /></td><td>Tula</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_Tulancingo78.png" /></td><td>Tulancingo</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_Tuxpan79.png" /></td><td>Tuxpan</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_ValledeJuarez80.png" /></td><td>Valle de Juarez</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_ValledelCarrizo81.png" /></td><td>Valle del Carrizo</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_Valsequillo82.png" /></td><td>Valsequillo</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_Xicotencatl83.png" /></td><td>Xicotencatl</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_Zamora84.png" /></td><td>Zamora</td></tr><tr><td style="text-align: center;"><img src="legend/Distritos_1_85.png" /></td><td></td></tr></table>';
+        var rios = '<img src="legend/Rios_0.png" /> Rios';
+        var overLayers = [
+			{
+				group: "PRESAS PRINCIPALES",
+				collapsed: true,
+				layers: [
+					{
+						active: true,
+						name: presas,
+						layer: layer_Presas_2017_2
+					}
+				]
+            },{
+				group: "DISTRITOS DE RIEGO",
+				collapsed: true,
+				layers: [
+					{
+						active: true,
+						name: distrit,
+						layer: layer_Distritos_1
+					}
+				]
+            },{
+				group: "Rios",
+				collapsed: true,
+				layers: [
+					{
+						active: true,
+						name: rios,
+						layer: layer_Rios_0
+					}
+				]
+            }
+        ];
+        try {
+            if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+                var panelLayers = new L.Control.PanelLayers(baseLayers, overLayers, {
+                compact: true,
+                collapsed: true,
+                collapsibleGroups: true
+            });
+            }else{
+                var panelLayers = new L.Control.PanelLayers(baseLayers, overLayers, {
+                compact: true,
+                //collapsed: true,
+                collapsibleGroups: true
+            });
+            }
+            map.addControl(panelLayers);	
+            map.fitBounds(layer_Distritos_1.getBounds());
+            setBounds();
+		}
+		catch(error){
+			alert(error);
+			}
+        
+        </script>
+    </body>
+</html>
